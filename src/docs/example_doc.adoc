@@ -1,9 +1,12 @@
 :sectnums:
 :projectname: Example
 = {projectname} Docs
+
 :toc: left
 :toclevels: 3
 
 :leveloffset: 1
+
+{version-label}: v{revnumber}
 
 Hello.
