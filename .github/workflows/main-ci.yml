@@ -4,21 +4,45 @@ on:
   push:
     branches: [main]
 
+env:
+  CI_VERSION_BASE: '0.1'
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      ci_version: ${{ steps.compute_version.outputs.ci_version }}
     steps:
       - name: Fetch
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Compute Version
+        id: compute_version
+        run: |
+          ts="$(git log -1 --format=%cd --date=format: '%y%m%d%H%M%S' HEAD)"
+          version="${CI_VERSION_BASE}.${ts}"
+          echo "CI_VERSION=${version}" | tee $GITHUB_ENV
+          echo "ci_version=${version}" >> $GITHUB_OUTPUT
       - name: Build
         uses: gradle/gradle-build-action@v2
         with:
           arguments: assemble
-      - name: Docs
-        uses: actions/upload-artifact@v3
-        if: success()
+  release:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      CI_VERSION: ${{ needs.build.outputs.ci_version }}
+    steps:
+      - name: Fetch
+        uses: actions/checkout@v3
+      - name: Tag
+        run: git tag "v${CI_VERSION:?}" && git push origin "v${CI_VERSION:?}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: ncipollo/release-action@v1
         with:
-          name: documents
-          path: "build/docs/example_doc.pdf"
+          artifacts: "build/docs/example_doc.pdf"
