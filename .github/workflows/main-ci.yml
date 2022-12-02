@@ -42,6 +42,8 @@ jobs:
         run: git tag "v${CI_VERSION:?}" && git push origin "v${CI_VERSION:?}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch again
+        uses: actions/checkout@v3
       - name: Release
         uses: ncipollo/release-action@v1
         with:
