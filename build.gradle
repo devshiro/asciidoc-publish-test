@@ -1,0 +1,28 @@
+plugins {
+    id 'org.asciidoctor.jvm.pdf' version '3.3.2'
+}
+
+repositories {
+    mavenCentral()
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+asciidoctorj {
+    modules {
+        diagram.use()
+        pdf.use()
+    }
+
+    asciidoctorPdf {
+        sourceDir file('src')
+        sources {
+            include 'docs/example_doc.adoc'
+        }
+        outputDir file('build')
+        baseDirFollowsSourceFile()
+    }
+}
+
+assemble.dependsOn(asciidoctorPdf)
