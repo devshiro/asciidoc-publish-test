@@ -20,7 +20,7 @@ jobs:
       - name: Compute Version
         id: compute_version
         run: |
-          ts="$(git log -1 --format=%cd --date=format: '%y%m%d%H%M%S' HEAD)"
+          ts="$(git log -1 --format=%cd --date=format:'%y%m%d%H%M%S' HEAD)"
           version="${CI_VERSION_BASE}.${ts}"
           echo "CI_VERSION=${version}" | tee $GITHUB_ENV
           echo "ci_version=${version}" >> $GITHUB_OUTPUT
