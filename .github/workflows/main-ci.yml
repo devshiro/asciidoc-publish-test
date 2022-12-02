@@ -42,8 +42,11 @@ jobs:
         run: git tag "v${CI_VERSION:?}" && git push origin "v${CI_VERSION:?}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch Tag
+        uses: actions/checkout@v3
+        with:
+          ref: "v${{ env.CI_VERSION }}"
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-          tag: "v${CI_VERSION:?}"
           artifacts: "build/docs/example_doc.pdf"
